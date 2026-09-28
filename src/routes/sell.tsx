@@ -48,11 +48,11 @@ function SellPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!user) return;
-    if (profile?.banned) return toast.error("Your account is banned.");
-    if (!title.trim()) return toast.error("Add a title");
-    if (files.length === 0) return toast.error("Upload at least one photo");
+    if (profile?.banned) { toast.error("Your account is banned."); return; }
+    if (!title.trim()) { toast.error("Add a title"); return; }
+    if (files.length === 0) { toast.error("Upload at least one photo"); return; }
     const wa = normalizePhone(whatsapp);
-    if (wa.length < 8) return toast.error("Add a valid WhatsApp number");
+    if (wa.length < 8) { toast.error("Add a valid WhatsApp number"); return; }
 
     setBusy(true);
     try {

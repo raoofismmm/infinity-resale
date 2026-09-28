@@ -40,8 +40,8 @@ function AuthPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const digits = normalizePhone(phone);
-    if (digits.length < 8) return toast.error("Enter a valid phone number");
-    if (password.length < 6) return toast.error("Password must be at least 6 characters");
+    if (digits.length < 8) { toast.error("Enter a valid phone number"); return; }
+    if (password.length < 6) { toast.error("Password must be at least 6 characters"); return; }
     setBusy(true);
     try {
       if (isRegister) {

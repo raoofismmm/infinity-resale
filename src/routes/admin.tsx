@@ -74,7 +74,7 @@ function UsersTab() {
 
   async function setBanned(id: string, banned: boolean) {
     const { error } = await supabase.from("profiles").update({ banned }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(banned ? "User banned" : "User unbanned");
     void qc.invalidateQueries({ queryKey: ["admin-users"] });
   }
@@ -115,7 +115,7 @@ function ProductsTab() {
     const base = isBoosted(p.boosted_until) ? new Date(p.boosted_until!).getTime() : Date.now();
     const until = new Date(base + 12 * 3600 * 1000).toISOString();
     const { error } = await supabase.from("products").update({ boosted_until: until }).eq("id", p.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Boosted for 12 hours");
     void qc.invalidateQueries({ queryKey: ["admin-products"] });
     void qc.invalidateQueries({ queryKey: ["products"] });
@@ -227,7 +227,7 @@ function PopupTab() {
       })
       .eq("id", 1);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Popup updated");
     void qc.invalidateQueries({ queryKey: ["admin-settings"] });
   }
