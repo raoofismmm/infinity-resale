@@ -14,16 +14,193 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      boost_codes: {
+        Row: {
+          code: string
+          created_at: string
+          product_id: string | null
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          product_id?: string | null
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          product_id?: string | null
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "boost_codes_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          boosted_until: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          images: string[]
+          is_hidden: boolean
+          is_sold: boolean
+          location: string | null
+          price: number
+          seller_id: string
+          title: string
+          updated_at: string
+          whatsapp: string
+        }
+        Insert: {
+          boosted_until?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          images?: string[]
+          is_hidden?: boolean
+          is_sold?: boolean
+          location?: string | null
+          price?: number
+          seller_id: string
+          title: string
+          updated_at?: string
+          whatsapp: string
+        }
+        Update: {
+          boosted_until?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          images?: string[]
+          is_hidden?: boolean
+          is_sold?: boolean
+          location?: string | null
+          price?: number
+          seller_id?: string
+          title?: string
+          updated_at?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          banned: boolean
+          created_at: string
+          display_name: string | null
+          id: string
+          phone: string
+          updated_at: string
+          whatsapp: string
+        }
+        Insert: {
+          banned?: boolean
+          created_at?: string
+          display_name?: string | null
+          id: string
+          phone: string
+          updated_at?: string
+          whatsapp: string
+        }
+        Update: {
+          banned?: boolean
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          phone?: string
+          updated_at?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          boost_group_url: string
+          id: number
+          popup_body: string
+          popup_enabled: boolean
+          popup_image_url: string | null
+          popup_link_url: string | null
+          popup_title: string
+          updated_at: string
+        }
+        Insert: {
+          boost_group_url?: string
+          id?: number
+          popup_body?: string
+          popup_enabled?: boolean
+          popup_image_url?: string | null
+          popup_link_url?: string | null
+          popup_title?: string
+          updated_at?: string
+        }
+        Update: {
+          boost_group_url?: string
+          id?: number
+          popup_body?: string
+          popup_enabled?: boolean
+          popup_image_url?: string | null
+          popup_link_url?: string | null
+          popup_title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_banned: { Args: { _user_id: string }; Returns: boolean }
+      redeem_boost_code: {
+        Args: { _code: string; _product_id: string }
+        Returns: Json
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +327,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
