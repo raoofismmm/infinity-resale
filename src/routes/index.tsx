@@ -79,9 +79,15 @@ function Home() {
             just real deals.
           </p>
           <div className="flex flex-wrap gap-2">
-            <Link to={user ? "/sell" : "/auth"} search={user ? undefined : { mode: "register" }} className="btn-primary">
-              Post your item
-            </Link>
+            {user ? (
+              <Link to="/sell" className="btn-primary">
+                Post your item
+              </Link>
+            ) : (
+              <Link to="/auth" search={{ mode: "register" }} className="btn-primary">
+                Post your item
+              </Link>
+            )}
             <a href="#browse" className="btn-outline">
               Browse listings
             </a>
