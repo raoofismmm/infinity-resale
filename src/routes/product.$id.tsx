@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SmartImage } from "@/components/SmartImage";
 import { BoostTimer, isBoosted } from "@/components/BoostTimer";
 import { formatPrice } from "@/lib/images";
+import { useAuth } from "@/lib/auth";
 import type { ProductRow } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/product/$id")({
@@ -36,6 +37,7 @@ function Missing() {
 function ProductPage() {
   const { id } = Route.useParams();
   const [active, setActive] = useState(0);
+  const { user } = useAuth();
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
@@ -57,7 +59,7 @@ function ProductPage() {
   if (!product) return <Missing />;
 
   const waText = encodeURIComponent(
-    `Hi! I want to order "${product.title}" (${formatPrice(Number(product.price))}) listed on INFINITYRESALE.`,
+    `Hi! I want to order "${product.title}" (${formatPrice(Number(product.price))}) listed on INFINITYRESALE.\n\nProduct link: ${typeof window !== "undefined" ? window.location.origin : "https://infinity-resale.lovable.app"}/product/${product.id}`,
   );
   const waLink = `https://wa.me/${product.whatsapp}?text=${waText}`;
 
@@ -102,6 +104,10 @@ function ProductPage() {
             </p>
             {product.is_sold ? (
               <p className="text-sm font-semibold text-muted-foreground">This item is marked sold.</p>
+            ) : !user ? (
+              <Link to="/auth" search={{ mode: "login" }} className="btn-primary w-full">
+                <MessageCircle className="size-4" /> Log in to order
+              </Link>
             ) : (
               <a href={waLink} target="_blank" rel="noreferrer" className="btn-primary w-full">
                 <MessageCircle className="size-4" /> Order on WhatsApp
