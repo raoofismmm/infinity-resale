@@ -9,6 +9,8 @@ import { SmartImage } from "@/components/SmartImage";
 import { BoostTimer, isBoosted } from "@/components/BoostTimer";
 import { formatPrice } from "@/lib/images";
 import type { ProductRow } from "@/components/ProductCard";
+import { useServerFn } from "@tanstack/react-start";
+import { removeUser } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -60,6 +62,7 @@ function AdminPage() {
 
 function UsersTab() {
   const qc = useQueryClient();
+  const removeUserFn = useServerFn(removeUser);
   const { data: users = [] } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
@@ -79,6 +82,15 @@ function UsersTab() {
     void qc.invalidateQueries({ queryKey: ["admin-users"] });
   }
 
+  async function remove(id: string) {
+    if (!confirm("Remove this user and all their listings? They can register again.")) return;
+    const res = await removeUserFn({ data: { userId: id } });
+    if (!res.ok) { toast.error(res.error); return; }
+    toast.success("User removed");
+    void qc.invalidateQueries({ queryKey: ["admin-users"] });
+    void qc.invalidateQueries({ queryKey: ["products"] });
+  }
+
   return (
     <div className="space-y-3">
       <p className="text-sm text-muted-foreground">{users.length} registered users</p>
@@ -94,6 +106,11 @@ function UsersTab() {
           <button onClick={() => setBanned(u.id, !u.banned)} className={u.banned ? "btn-outline" : "btn-soft"}>
             <Ban className="size-4" /> {u.banned ? "Unban" : "Ban"}
           </button>
+          {!u.banned && (
+            <button onClick={() => remove(u.id)} className="btn-ghost text-destructive">
+              <Trash2 className="size-4" /> Remove
+            </button>
+          )}
         </div>
       ))}
     </div>
